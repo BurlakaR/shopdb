@@ -10,9 +10,14 @@ option java_outer_classname = "ProductProto";
 service ProductService{
   rpc takeProduct (ProductRequest) returns (ProductResponse) {}
   rpc takeProductList (ProductListRequest) returns (stream ProductResponse){}
+
   rpc takeCategories (CategoryRequest) returns (stream CategoryResponse){}
+
+  rpc takeClientList(ClientListRequest) returns (stream ClientResponse){}
+
   rpc saveCategory(SaveCategoryRequest) returns (SaveResponse){}
   rpc saveProduct(SaveProductRequest) returns (SaveResponse){}
+  rpc saveClient(SaveClientRequest) returns (SaveResponse){}
 }
 
 
@@ -46,3 +51,13 @@ message SaveProductRequest {
   bytes product = 1;
 }
 
+message SaveClientRequest {
+  bytes client = 1;
+}
+
+message ClientListRequest {
+}
+
+message ClientResponse {
+  bytes client=1;
+}

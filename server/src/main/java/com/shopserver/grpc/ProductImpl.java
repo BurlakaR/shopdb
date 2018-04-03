@@ -1,12 +1,15 @@
 package com.shopserver.grpc;
 
 import com.google.protobuf.ByteString;
-import com.shop.*;
 
+
+import com.shop.*;
 import com.shopserver.database.objects.Category;
+import com.shopserver.database.objects.Client;
 import com.shopserver.database.objects.Product;
 import com.shopserver.database.objects.Property;
 import com.shopserver.database.repositories.CategoryRepository;
+import com.shopserver.database.repositories.ClientRepository;
 import com.shopserver.database.repositories.ProductRepository;
 import io.grpc.stub.StreamObserver;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +21,7 @@ import javax.annotation.PostConstruct;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Component
@@ -28,6 +32,9 @@ public  class ProductImpl  extends ProductServiceGrpc.ProductServiceImplBase  {
 
     @Autowired
     private CategoryRepository dbCateg;
+
+    @Autowired
+    private ClientRepository clientRepository;
 
     @PostConstruct
     public void init(){
@@ -46,6 +53,8 @@ public  class ProductImpl  extends ProductServiceGrpc.ProductServiceImplBase  {
         Product product = new Product("1","1","1",list, "1", 5, listp);
         dbProd.save(product);
         dbProd.deleteAllByUrl("1");
+        clientRepository.save(new Client("1", "-1-1", "1","1", new Date(1)));
+        clientRepository.deleteAllByLogin("-1-1");
     }
 
     public static byte[] convertToBytes(Serializable object) {
@@ -95,6 +104,18 @@ public  class ProductImpl  extends ProductServiceGrpc.ProductServiceImplBase  {
     }
 
     @Override
+    public void takeClientList(ClientListRequest request, StreamObserver<ClientResponse> responseObserver) {
+        List<Client> clientList = clientRepository.findAll();
+        for(int i=0;i<clientList.size();i++){
+            byte [] mas=convertToBytes(clientList.get(i));
+            ByteString byteString=ByteString.copyFrom(mas);
+            ClientResponse response =  ClientResponse.newBuilder().setClient(byteString).build();
+            responseObserver.onNext(response);
+        }
+        responseObserver.onCompleted();
+    }
+
+    @Override
     public void saveCategory(SaveCategoryRequest request, StreamObserver<SaveResponse> responseObserver ){
         ByteString byteString=request.getCategory();
         byte [] mas = byteString.toByteArray();
@@ -113,6 +134,18 @@ public  class ProductImpl  extends ProductServiceGrpc.ProductServiceImplBase  {
         Object object= convertFromBytes(mas);
         Product product = (Product) object;
         dbProd.save(product);
+        SaveResponse response =  SaveResponse.newBuilder().build();
+        responseObserver.onNext(response);
+        responseObserver.onCompleted();
+    }
+
+    @Override
+    public void saveClient(SaveClientRequest request, StreamObserver<SaveResponse> responseObserver){
+        ByteString byteString=request.getClient();
+        byte [] mas = byteString.toByteArray();
+        Object object= convertFromBytes(mas);
+        Client client = (Client) object;
+        clientRepository.save(client);
         SaveResponse response =  SaveResponse.newBuilder().build();
         responseObserver.onNext(response);
         responseObserver.onCompleted();
