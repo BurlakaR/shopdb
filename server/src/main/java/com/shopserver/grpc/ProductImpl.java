@@ -55,6 +55,7 @@ public  class ProductImpl  extends ProductServiceGrpc.ProductServiceImplBase  {
         dbProd.deleteAllByUrl("1");
         clientRepository.save(new Client("1", "-1-1", "1","1", new Date(1)));
         clientRepository.deleteAllByLogin("-1-1");
+        clientRepository.findAll();
     }
 
     public static byte[] convertToBytes(Serializable object) {
