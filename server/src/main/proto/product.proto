@@ -31,7 +31,7 @@ message ProductResponse {
 }
 
 message ProductListRequest {
-  string url=1;
+
 }
 
 message CategoryRequest {

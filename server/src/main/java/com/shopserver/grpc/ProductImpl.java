@@ -44,6 +44,7 @@ public  class ProductImpl  extends ProductServiceGrpc.ProductServiceImplBase  {
     }
 
     public void test(){
+        dbProd.findAll();
         dbProd.findByUrl("p0");
         dbCateg.findAll();
         List<String>list=new ArrayList<String >();
@@ -51,10 +52,10 @@ public  class ProductImpl  extends ProductServiceGrpc.ProductServiceImplBase  {
         dbCateg.save(testCategory);
         dbCateg.deleteAllByUrl("name");
         List<Property> listp = new ArrayList<Property>();
-        Product product = new Product("1","1","1",list, "1", 5, listp);
+        Product product = new Product("1","1",list, "1", 5, listp);
         dbProd.save(product);
         dbProd.deleteAllByUrl("1");
-        clientRepository.save(new Client("1", "-1-1", "1","1", new Date(1), new Basket(new ArrayList<Product>(), 1)));
+        clientRepository.save(new Client("1", "-1-1", "1","1", new Date(1)));
         clientRepository.deleteAllByLogin("-1-1");
         clientRepository.findAll();
         sellRepository.save(new Sell("1","1", new Basket(new ArrayList<Product>(),1)));
@@ -85,7 +86,7 @@ public  class ProductImpl  extends ProductServiceGrpc.ProductServiceImplBase  {
 
     @Override
     public void takeProductList(ProductListRequest request, StreamObserver<ProductResponse> responseObserver) {
-        List<Product> productList = dbProd.findAllByCategory(request.getUrl());
+        List<Product> productList = dbProd.findAll();
         for(int i=0;i<productList.size();i++){
             byte[] mas=convertToBytes(productList.get(i));
             ByteString byteString = ByteString.copyFrom(mas);

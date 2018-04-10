@@ -8,6 +8,5 @@ import java.util.List;
 
 public interface ProductRepository extends MongoRepository<Product, Long> {
     Product findByUrl(String url);
-    List<Product> findAllByCategory(String category);
     void deleteAllByUrl(String url);
 }

@@ -15,6 +15,5 @@ public class Client implements Serializable {
     @NonNull String password;
     @NonNull String email;
     @NonNull Date date;
-    @NonNull Basket basket;
 
 }

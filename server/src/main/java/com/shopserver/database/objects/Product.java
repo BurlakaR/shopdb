@@ -13,7 +13,7 @@ public class Product implements Serializable{
 
     @NonNull private String url;
     @NonNull private String img;
-    @NonNull private String category;
+
     @NonNull private List<String> subcategoryList;
     @NonNull private String name;
     @NonNull private int price;

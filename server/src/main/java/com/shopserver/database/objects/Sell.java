@@ -9,7 +9,7 @@ import java.io.Serializable;
 @Document(collection = "sellList")
 @Data
 public class Sell {
-    @NonNull String clientAutor;
+    @NonNull String login;
     @NonNull String clientIp;
     @NonNull Basket basket;
 }
