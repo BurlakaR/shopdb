@@ -18,6 +18,7 @@ service ProductService{
   rpc saveCategory(SaveCategoryRequest) returns (SaveResponse){}
   rpc saveProduct(SaveProductRequest) returns (SaveResponse){}
   rpc saveClient(SaveClientRequest) returns (SaveResponse){}
+  rpc buy(BuyRequest) returns (BuyResponse){}
 }
 
 
@@ -60,4 +61,11 @@ message ClientListRequest {
 
 message ClientResponse {
   bytes client=1;
+}
+
+message BuyRequest {
+  bytes check=1;
+}
+
+message BuyResponse {
 }

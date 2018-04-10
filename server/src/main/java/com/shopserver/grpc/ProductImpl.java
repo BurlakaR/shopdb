@@ -4,13 +4,11 @@ import com.google.protobuf.ByteString;
 
 
 import com.shop.*;
-import com.shopserver.database.objects.Category;
-import com.shopserver.database.objects.Client;
-import com.shopserver.database.objects.Product;
-import com.shopserver.database.objects.Property;
+import com.shopserver.database.objects.*;
 import com.shopserver.database.repositories.CategoryRepository;
 import com.shopserver.database.repositories.ClientRepository;
 import com.shopserver.database.repositories.ProductRepository;
+import com.shopserver.database.repositories.SellRepository;
 import io.grpc.stub.StreamObserver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
@@ -36,6 +34,9 @@ public  class ProductImpl  extends ProductServiceGrpc.ProductServiceImplBase  {
     @Autowired
     private ClientRepository clientRepository;
 
+    @Autowired
+    private SellRepository sellRepository;
+
     @PostConstruct
     public void init(){
         //magic
@@ -53,9 +54,11 @@ public  class ProductImpl  extends ProductServiceGrpc.ProductServiceImplBase  {
         Product product = new Product("1","1","1",list, "1", 5, listp);
         dbProd.save(product);
         dbProd.deleteAllByUrl("1");
-        clientRepository.save(new Client("1", "-1-1", "1","1", new Date(1)));
+        clientRepository.save(new Client("1", "-1-1", "1","1", new Date(1), new Basket(new ArrayList<Product>(), 1)));
         clientRepository.deleteAllByLogin("-1-1");
         clientRepository.findAll();
+        sellRepository.save(new Sell("1","1", new Basket(new ArrayList<Product>(),1)));
+        sellRepository.deleteAllByLogin("1");
     }
 
     public static byte[] convertToBytes(Serializable object) {
@@ -148,6 +151,18 @@ public  class ProductImpl  extends ProductServiceGrpc.ProductServiceImplBase  {
         Client client = (Client) object;
         clientRepository.save(client);
         SaveResponse response =  SaveResponse.newBuilder().build();
+        responseObserver.onNext(response);
+        responseObserver.onCompleted();
+    }
+
+    @Override
+    public void buy(BuyRequest request, StreamObserver<BuyResponse> responseObserver){
+        ByteString byteString=request.getCheck();
+        byte [] mas = byteString.toByteArray();
+        Object object= convertFromBytes(mas);
+        Authorize authorize = (Authorize) object;
+        sellRepository.save(new Sell(authorize.getClientAutor().getLogin(), authorize.getClientIp(), authorize.getBasket()));
+        BuyResponse response =  BuyResponse.newBuilder().build();
         responseObserver.onNext(response);
         responseObserver.onCompleted();
     }
