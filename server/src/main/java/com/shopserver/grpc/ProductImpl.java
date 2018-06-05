@@ -58,7 +58,7 @@ public  class ProductImpl  extends ProductServiceGrpc.ProductServiceImplBase  {
         clientRepository.save(new Client("1", "-1-1", "1","1", new Date(1)));
         clientRepository.deleteAllByLogin("-1-1");
         clientRepository.findAll();
-        sellRepository.save(new Sell("1","1", new Basket(new ArrayList<Product>(),1)));
+        sellRepository.save(new Sell("1","1", new Basket(new ArrayList<Product>(), new ArrayList<>(), 1)));
         sellRepository.deleteAllByLogin("1");
     }
 
@@ -128,6 +128,42 @@ public  class ProductImpl  extends ProductServiceGrpc.ProductServiceImplBase  {
         Category category = (Category) object;
         dbCateg.save(category);
         SaveResponse response =  SaveResponse.newBuilder().build();
+        responseObserver.onNext(response);
+        responseObserver.onCompleted();
+    }
+
+    @Override
+    public void delProduct(DeleteProduct request, StreamObserver<DeleteResponse> responseObserver){
+        ByteString byteString=request.getProduct();
+        byte [] mas = byteString.toByteArray();
+        Object object= convertFromBytes(mas);
+        Product product = (Product) object;
+        dbProd.deleteAllByUrl(product.getUrl());
+        DeleteResponse response =  DeleteResponse.newBuilder().build();
+        responseObserver.onNext(response);
+        responseObserver.onCompleted();
+    }
+
+    @Override
+    public void delClient(DeleteClient request, StreamObserver<DeleteResponse> responseObserver){
+        ByteString byteString=request.getClient();
+        byte [] mas = byteString.toByteArray();
+        Object object= convertFromBytes(mas);
+        Client product = (Client) object;
+        clientRepository.deleteAllByLogin(product.getLogin());
+        DeleteResponse response =  DeleteResponse.newBuilder().build();
+        responseObserver.onNext(response);
+        responseObserver.onCompleted();
+    }
+
+    @Override
+    public void delCategory(DeleteCategory request, StreamObserver<DeleteResponse> responseObserver){
+        ByteString byteString=request.getCategory();
+        byte [] mas = byteString.toByteArray();
+        Object object= convertFromBytes(mas);
+        Category product = (Category) object;
+        dbCateg.deleteAllByUrl(product.getUrl());
+        DeleteResponse response =  DeleteResponse.newBuilder().build();
         responseObserver.onNext(response);
         responseObserver.onCompleted();
     }

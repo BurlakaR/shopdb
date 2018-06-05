@@ -19,6 +19,10 @@ service ProductService{
   rpc saveProduct(SaveProductRequest) returns (SaveResponse){}
   rpc saveClient(SaveClientRequest) returns (SaveResponse){}
   rpc buy(BuyRequest) returns (BuyResponse){}
+
+  rpc delClient(DeleteClient) returns (DeleteResponse){}
+  rpc delProduct(DeleteProduct) returns (DeleteResponse){}
+  rpc delCategory(DeleteCategory) returns (DeleteResponse){}
 }
 
 
@@ -68,4 +72,18 @@ message BuyRequest {
 }
 
 message BuyResponse {
+}
+
+message DeleteProduct {
+  bytes product = 1;
+}
+
+message DeleteClient {
+  bytes client = 1;
+}
+message DeleteCategory {
+  bytes category = 1;
+}
+
+message DeleteResponse {
 }
